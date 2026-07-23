@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>医学学术会议 AI 策划助手</title>
+  <style>
+    :root {
+      --bg: #f5f7f9;
+      --panel: #ffffff;
+      --line: #d8dee6;
+      --line-strong: #b8c2cf;
+      --text: #202833;
+      --muted: #657282;
+      --brand: #176b87;
+      --brand-strong: #0f5369;
+      --accent: #9a6b24;
+      --ok-bg: #e8f5ee;
+      --ok: #1e7d46;
+      --warn-bg: #fff5d8;
+      --warn: #8a5d00;
+      --bad-bg: #ffe9e7;
+      --bad: #b53025;
+      --soft: #eef2f5;
+      --shadow: 0 14px 36px rgba(32, 40, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line-strong);
+      background: var(--panel);
+      color: var(--text);
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    button.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+    }
+
+    button.primary:hover {
+      background: var(--brand-strong);
+      color: white;
+    }
+
+    button.danger:hover {
+      border-color: var(--bad);
+      color: var(--bad);
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand-strong);
+    }
+
+    .status-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .pill.ok {
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .pill.warn {
+      background: var(--warn-bg);
+      color: var(--warn);
+    }
+
+    .pill.bad {
+      background: var(--bad-bg);
+      color: var(--bad);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 18px 20px 28px;
+      display: grid;
+      grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 8px 10px;
+      color: var(--text);
+      background: white;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 74px;
+      line-height: 1.5;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.12);
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px;
+      background: var(--soft);
+      border-radius: 8px;
+    }
+
+    .checks label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .checks input {
+      width: 16px;
+      min-height: 16px;
+      padding: 0;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .brief-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .brief-item {
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 10px;
+      min-height: 66px;
+    }
+
+    .brief-item b {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .brief-item span {
+      display: block;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1080px;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    th:last-child, td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      background: #eef4f6;
+      color: #31414f;
+      text-align: left;
+      font-size: 12px;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    td[contenteditable="true"] {
+      min-height: 38px;
+      outline: none;
+      background: #fff;
+    }
+
+    td[contenteditable="true"]:focus {
+      box-shadow: inset 0 0 0 2px rgba(23, 107, 135, 0.35);
+      background: #fbfeff;
+    }
+
+    .col-time { width: 110px; }
+    .col-step { width: 110px; }
+    .col-topic { width: 230px; }
+    .col-person { width: 120px; }
+    .col-place { width: 150px; }
+    .col-discuss { width: 260px; }
+    .col-note { width: 150px; }
+    .col-op { width: 76px; text-align: center; }
+
+    .row-actions {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      min-height: 30px;
+      padding: 0;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .validation-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .validation-list li {
+      border-left: 4px solid var(--line-strong);
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 9px 10px;
+      line-height: 1.5;
+    }
+
+    .validation-list li.ok {
+      border-left-color: var(--ok);
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .validation-list li.warn {
+      border-left-color: var(--warn);
+      background: var(--warn-bg);
+      color: var(--warn);
+    }
+
+    .validation-list li.bad {
+      border-left-color: var(--bad);
+      background: var(--bad-bg);
+      color: var(--bad);
+    }
+
+    .empty-state {
+      padding: 30px;
+      color: var(--muted);
+      text-align: center;
+      background: var(--soft);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brief-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        padding: 12px;
+      }
+
+      .two,
+      .checks,
+      .brief-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <h1>医学学术会议 AI 策划助手</h1>
+      <div class="status-strip">
+        <span class="pill" id="agendaCount">0 个日程项</span>
+        <span class="pill" id="validationStatus">未校验</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">填写需求</h2>
+      </div>
+      <div class="panel-body">
+        <form id="requirementForm" class="form-grid">
+          <label>
+            会议名称
+            <input id="meetingName" value="肺癌精准诊疗城市会">
+          </label>
+
+          <div class="two">
+            <label>
+              会议类型
+              <select id="meetingType">
+                <option value="城市会">城市会</option>
+                <option value="省级论坛">省级论坛</option>
+                <option value="MDT">MDT</option>
+                <option value="专家顾问会">专家顾问会</option>
+                <option value="线上会">线上会</option>
+              </select>
+            </label>
+            <label>
+              疾病领域
+              <select id="disease">
+                <option value="肺癌">肺癌</option>
+                <option value="胃癌">胃癌</option>
+                <option value="乳腺癌">乳腺癌</option>
+                <option value="结直肠癌">结直肠癌</option>
+                <option value="泛实体瘤">泛实体瘤</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            癌种/分期
+            <input id="subtype" value="NSCLC 早中期-围术期">
+          </label>
+
+          <div class="two">
+            <label>
+              会议日期
+              <input type="date" id="meetingDate">
+            </label>
+            <label>
+              开始时间
+              <input type="time" id="startTime" value="14:00">
+            </label>
+          </div>
+
+          <div class="two">
+            <label>
+              会议时长
+              <select id="duration">
+                <option value="120">2 小时</option>
+                <option value="150">2.5 小时</option>
+                <option value="180" selected>3 小时</option>
+                <option value="240">半天 4 小时</option>
+                <option value="420">全天 7 小时</option>
+              </select>
+            </label>
+            <label>
+              会议规模
+              <select id="scale">
+                <option>10-30人</option>
+                <option selected>30-50人</option>
+                <option>100人</option>
+                <option>200-500人</option>
+                <option>线上不限</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            会议地点
+            <input id="location" value="待定会议酒店">
+          </label>
+
+          <label>
+            会议目标
+            <textarea id="goal">强化NGS检测在围术期精准诊疗中的临床价值，提升区域专家交流和病例互动质量。</textarea>
+          </label>
+
+          <label>
+            期望环节
+            <div class="checks">
+              <label><input type="checkbox" name="sections" value="主题报告" checked>主题报告</label>
+              <label><input type="checkbox" name="sections" value="病例分享" checked>病例分享</label>
+              <label><input type="checkbox" name="sections" value="圆桌讨论" checked>圆桌讨论</label>
+              <label><input type="checkbox" name="sections" value="茶歇">茶歇</label>
+              <label><input type="checkbox" name="sections" value="会议总结" checked>总结</label>
+            </div>
+          </label>
+
+          <div class="actions">
+            <button class="primary" type="button" id="generateBtn">生成策划</button>
+            <button type="button" id="clearBtn">清空重填</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">会议概览</h2>
+        </div>
+        <div class="panel-body">
+          <div class="brief-grid">
+            <div class="brief-item"><b>会议主题</b><span id="briefTheme">尚未生成</span></div>
+            <div class="brief-item"><b>会议时间</b><span id="briefTime">尚未生成</span></div>
+            <div class="brief-item"><b>地点与规模</b><span id="briefPlace">尚未生成</span></div>
+            <div class="brief-item"><b>策划状态</b><span id="briefStatus">待填写</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">编辑日程</h2>
+          <div class="actions" style="margin-top:0">
+            <button type="button" id="addRowBtn">新增日程行</button>
+            <button type="button" id="validateBtn">规则校验</button>
+            <button class="primary" type="button" id="exportBtn">导出 CSV</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="agendaEmpty" class="empty-state">填写需求后点击“生成策划”。</div>
+          <div class="table-wrap" id="agendaWrap" hidden>
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-time">时间</th>
+                  <th class="col-step">环节</th>
+                  <th class="col-topic">讲题/主题</th>
+                  <th class="col-person">讲者</th>
+                  <th class="col-person">主持</th>
+                  <th class="col-place">地点</th>
+                  <th class="col-discuss">讨论议题</th>
+                  <th class="col-note">备注</th>
+                  <th class="col-op">操作</th>
+                </tr>
+              </thead>
+              <tbody id="agendaBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">规则校验</h2>
+        </div>
+        <div class="panel-body">
+          <ul class="validation-list" id="validationList">
+            <li>尚未校验。</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const meetingTemplates = {
+      "城市会": ["开幕致辞", "主席致辞", "主题报告", "病例分享", "圆桌讨论", "会议总结"],
+      "省级论坛": ["开幕致辞", "主席致辞", "主题报告", "主题报告", "茶歇", "病例分享", "圆桌讨论", "会议总结"],
+      "MDT": ["主席致辞", "病例分享", "专家讨论", "圆桌讨论", "会议总结"],
+      "专家顾问会": ["背景介绍", "主题报告", "专家讨论", "圆桌讨论", "共识总结"],
+      "线上会": ["开场介绍", "主题报告", "互动答疑", "会议总结"]
+    };
+
+    const ruleMinutes = {
+      "开幕致辞": { min: 5, recommend: 10, max: 15 },
+      "主席致辞": { min: 5, recommend: 10, max: 15 },
+      "开场介绍": { min: 5, recommend: 10, max: 15 },
+      "背景介绍": { min: 10, recommend: 15, max: 20 },
+      "主题报告": { min: 20, recommend: 30, max: 45 },
+      "病例分享": { min: 15, recommend: 25, max: 30 },
+      "专家讨论": { min: 20, recommend: 30, max: 45 },
+      "圆桌讨论": { min: 20, recommend: 30, max: 40 },
+      "互动答疑": { min: 10, recommend: 20, max: 30 },
+      "茶歇": { min: 15, recommend: 20, max: 30 },
+      "会议总结": { min: 5, recommend: 10, max: 15 },
+      "共识总结": { min: 10, recommend: 15, max: 20 }
+    };
+
+    const topicLibrary = {
+      "肺癌": [
+        "NSCLC围术期临床诊疗现状及问题",
+        "NGS检测在NSCLC围术期诊疗中的应用和探索",
+        "ctDNA-MRD技术原理及临床发展探索",
+        "肺癌患者诊疗旅程及全程管理需求"
+      ],
+      "胃癌": [
+        "胃癌分子分型与精准治疗决策",
+        "消化道肿瘤MRD检测技术及临床应用",
+        "胃癌围术期治疗进展与检测策略"
+      ],
+      "乳腺癌": [
+        "乳腺癌分子分型与辅助治疗决策",
+        "基因检测在乳腺癌全程管理中的应用价值"
+      ],
+      "结直肠癌": [
+        "结直肠癌精准诊疗及全程管理最新研究进展",
+        "RAS/BRAF/MSI检测对治疗选择的临床价值",
+        "MRD监测在结直肠癌复发风险管理中的应用"
+      ],
+      "泛实体瘤": [
+        "检测驱动的实体瘤临床治疗决策",
+        "真实世界病例中的精准医学实践",
+        "NGS检测在肿瘤全程管理中的价值探索"
+      ]
+    };
+
+    const discussionLibrary = {
+      "肺癌": [
+        "基于ctDNA的液体活检技术在肺癌全程管理中的应用价值，您更看重哪些获益？",
+        "围术期患者使用NGS检测指导治疗决策时，临床最关注哪些证据和流程问题？",
+        "免疫、靶向治疗前移背景下，分子检测如何更好服务早中期肺癌患者？"
+      ],
+      "胃癌": [
+        "胃癌围术期治疗中，分子检测和MRD监测应如何嵌入临床路径？",
+        "针对HER2、MET、MSI等分型，临床治疗决策中最需要解决哪些检测问题？"
+      ],
+      "乳腺癌": [
+        "乳腺癌辅助治疗决策中，基因检测结果如何与传统临床病理因素结合？",
+        "不同分型乳腺癌患者的检测时机和随访策略应如何优化？"
+      ],
+      "结直肠癌": [
+        "结直肠癌术后MRD阳性患者的后续治疗和监测策略应如何设计？",
+        "RAS/BRAF/MSI检测在真实临床中的规范化推进还有哪些难点？"
+      ],
+      "泛实体瘤": [
+        "多癌种场景下，精准检测报告如何更好转化为临床可执行建议？",
+        "真实世界病例讨论中，检测驱动治疗决策的关键成功因素是什么？"
+      ]
+    };
+
+    const speakerLibrary = {
+      "肺癌": [
+        { name: "张国庆", role: "讲者", dept: "肺癌" },
+        { name: "杨明磊", role: "主席", dept: "胸外科" },
+        { name: "陈静璐", role: "主持", dept: "肺癌" }
+      ],
+      "胃癌": [
+        { name: "消化肿瘤专家A", role: "讲者", dept: "肿瘤科" },
+        { name: "病理专家B", role: "主持", dept: "病理科" }
+      ],
+      "乳腺癌": [
+        { name: "乳腺外科专家A", role: "讲者", dept: "乳腺外科" },
+        { name: "肿瘤内科专家B", role: "主持", dept: "肿瘤科" }
+      ],
+      "结直肠癌": [
+        { name: "消化肿瘤专家A", role: "讲者", dept: "消化肿瘤科" },
+        { name: "外科专家B", role: "主持", dept: "胃肠外科" }
+      ],
+      "泛实体瘤": [
+        { name: "MDT专家A", role: "讲者", dept: "肿瘤科" },
+        { name: "临床专家B", role: "主持", dept: "多学科团队" }
+      ]
+    };
+
+    const refs = {
+      meetingName: document.getElementById("meetingName"),
+      meetingType: document.getElementById("meetingType"),
+      disease: document.getElementById("disease"),
+      subtype: document.getElementById("subtype"),
+      meetingDate: document.getElementById("meetingDate"),
+      startTime: document.getElementById("startTime"),
+      duration: document.getElementById("duration"),
+      scale: document.getElementById("scale"),
+      location: document.getElementById("location"),
+      goal: document.getElementById("goal"),
+      agendaBody: document.getElementById("agendaBody"),
+      agendaWrap: document.getElementById("agendaWrap"),
+      agendaEmpty: document.getElementById("agendaEmpty"),
+      agendaCount: document.getElementById("agendaCount"),
+      validationStatus: document.getElementById("validationStatus"),
+      validationList: document.getElementById("validationList"),
+      briefTheme: document.getElementById("briefTheme"),
+      briefTime: document.getElementById("briefTime"),
+      briefPlace: document.getElementById("briefPlace"),
+      briefStatus: document.getElementById("briefStatus")
+    };
+
+    let agenda = [];
+    let validationIssues = [];
+
+    function initDate() {
+      const today = new Date();
+      today.setDate(today.getDate() + 14);
+      refs.meetingDate.value = today.toISOString().slice(0, 10);
+    }
+
+    function getRequirement() {
+      const sections = Array.from(document.querySelectorAll("input[name='sections']:checked")).map(item => item.value);
+      return {
+        name: refs.meetingName.value.trim() || "未命名学术会议",
+        type: refs.meetingType.value,
+        disease: refs.disease.value,
+        subtype: refs.subtype.value.trim(),
+        date: refs.meetingDate.value,
+        startTime: refs.startTime.value || "14:00",
+        duration: Number(refs.duration.value),
+        scale: refs.scale.value,
+        location: refs.location.value.trim() || "待定",
+        goal: refs.goal.value.trim(),
+        sections
+      };
+    }
+
+    function minutesToClock(totalMinutes) {
+      const h = Math.floor(totalMinutes / 60) % 24;
+      const m = totalMinutes % 60;
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    }
+
+    function clockToMinutes(clock) {
+      const match = String(clock || "").match(/^(\d{1,2}):(\d{2})$/);
+      if (!match) return null;
+      return Number(match[1]) * 60 + Number(match[2]);
+    }
+
+    function parseRangeMinutes(rangeText) {
+      const match = String(rangeText || "").match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+      if (!match) return null;
+      const start = clockToMinutes(match[1]);
+      const end = clockToMinutes(match[2]);
+      if (start === null || end === null || end <= start) return null;
+      return { start, end, duration: end - start };
+    }
+
+    function pick(list, index) {
+      if (!list || list.length === 0) return "待确认";
+      return list[index % list.length];
+    }
+
+    function getSpeaker(disease, preferredRole, index) {
+      const speakers = speakerLibrary[disease] || speakerLibrary["泛实体瘤"];
+      const roleMatch = speakers.find(item => item.role === preferredRole);
+      return (roleMatch || speakers[index % speakers.length]).name;
+    }
+
+    function getPreferredSteps(req) {
+      const base = meetingTemplates[req.type] || meetingTemplates["城市会"];
+      return base.filter(step => {
+        if (["主题报告", "病例分享", "圆桌讨论", "茶歇", "会议总结"].includes(step)) {
+          return req.sections.includes(step);
+        }
+        return true;
+      });
+    }
+
+    function allocateDurations(steps, totalMinutes) {
+      const recommended = steps.map(step => ruleMinutes[step]?.recommend || 20);
+      const recTotal = recommended.reduce((sum, item) => sum + item, 0);
+      const factor = totalMinutes / recTotal;
+      let durations = steps.map((step, index) => {
+        const rule = ruleMinutes[step] || { min: 10, max: 45 };
+        const scaled = Math.round((recommended[index] * factor) / 5) * 5;
+        return Math.max(rule.min, Math.min(rule.max, scaled));
+      });
+
+      let diff = totalMinutes - durations.reduce((sum, item) => sum + item, 0);
+      let guard = 0;
+      while (Math.abs(diff) >= 5 && guard < 100) {
+        guard += 1;
+        for (let i = 0; i < durations.length && Math.abs(diff) >= 5; i += 1) {
+          const rule = ruleMinutes[steps[i]] || { min: 10, max: 45 };
+          if (diff > 0 && durations[i] + 5 <= rule.max) {
+            durations[i] += 5;
+            diff -= 5;
+          } else if (diff < 0 && durations[i] - 5 >= rule.min) {
+            durations[i] -= 5;
+            diff += 5;
+          }
+        }
+        if (guard > 1 && Math.abs(diff) >= 5 && !durations.some((value, index) => {
+          const rule = ruleMinutes[steps[index]] || { min: 10, max: 45 };
+          return diff > 0 ? value < rule.max : value > rule.min;
+        })) break;
+      }
+      return durations;
+    }
+
+    function buildAgenda() {
+      const req = getRequirement();
+      const steps = getPreferredSteps(req);
+      const durations = allocateDurations(steps, req.duration);
+      const topics = topicLibrary[req.disease] || topicLibrary["泛实体瘤"];
+      const discussions = discussionLibrary[req.disease] || discussionLibrary["泛实体瘤"];
+      let cursor = clockToMinutes(req.startTime) || 14 * 60;
+      let topicIndex = 0;
+      let discussionIndex = 0;
+
+      agenda = steps.map((step, index) => {
+        const start = cursor;
+        const end = cursor + durations[index];
+        cursor = end;
+
+        let topic = step;
+        let speaker = "";
+        let host = "";
+        let discussion = "";
+        let note = "";
+
+        if (step === "主题报告") {
+          topic = pick(topics, topicIndex);
+          speaker = getSpeaker(req.disease, "讲者", topicIndex);
+          host = getSpeaker(req.disease, "主持", topicIndex);
+          topicIndex += 1;
+        } else if (step === "病例分享") {
+          topic = `${req.disease}真实世界病例分享`;
+          speaker = getSpeaker(req.disease, "讲者", topicIndex + 1);
+          host = getSpeaker(req.disease, "主持", topicIndex + 1);
+        } else if (["圆桌讨论", "专家讨论", "互动答疑"].includes(step)) {
+          topic = `${req.disease}精准诊疗实践讨论`;
+          host = getSpeaker(req.disease, "主持", discussionIndex);
+          discussion = pick(discussions, discussionIndex);
+          discussionIndex += 1;
+        } else if (["主席致辞", "开幕致辞", "开场介绍"].includes(step)) {
+          speaker = getSpeaker(req.disease, "主席", index);
+          topic = step;
+        } else if (step === "茶歇") {
+          topic = "茶歇交流";
+          note = "建议安排会场外交流区";
+        } else if (["会议总结", "共识总结"].includes(step)) {
+          speaker = getSpeaker(req.disease, "主席", index);
+          topic = step === "共识总结" ? "专家共识与行动建议总结" : "会议总结";
+        }
+
+        return {
+          time: `${minutesToClock(start)}-${minutesToClock(end)}`,
+          step,
+          topic,
+          speaker,
+          host,
+          location: req.location,
+          discussion,
+          note
+        };
+      });
+
+      updateBrief("已生成");
+      renderAgenda();
+      validateAgenda();
+    }
+
+    function renderAgenda() {
+      refs.agendaBody.innerHTML = "";
+      agenda.forEach((item, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td contenteditable="true" data-field="time">${escapeHtml(item.time)}</td>
+          <td contenteditable="true" data-field="step">${escapeHtml(item.step)}</td>
+          <td contenteditable="true" data-field="topic">${escapeHtml(item.topic)}</td>
+          <td contenteditable="true" data-field="speaker">${escapeHtml(item.speaker)}</td>
+          <td contenteditable="true" data-field="host">${escapeHtml(item.host)}</td>
+          <td contenteditable="true" data-field="location">${escapeHtml(item.location)}</td>
+          <td contenteditable="true" data-field="discussion">${escapeHtml(item.discussion)}</td>
+          <td contenteditable="true" data-field="note">${escapeHtml(item.note)}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" class="icon-btn danger" title="删除本行" data-delete="${index}">×</button>
+            </div>
+          </td>
+        `;
+        tr.querySelectorAll("[contenteditable='true']").forEach(cell => {
+          cell.addEventListener("input", () => {
+            agenda[index][cell.dataset.field] = cell.innerText.trim();
+            refreshCounts();
+            setValidationState("未校验", "");
+          });
+        });
+        refs.agendaBody.appendChild(tr);
+      });
+
+      refs.agendaWrap.hidden = agenda.length === 0;
+      refs.agendaEmpty.hidden = agenda.length > 0;
+      refreshCounts();
+    }
+
+    function addAgendaRow() {
+      const req = getRequirement();
+      agenda.push({
+        time: "",
+        step: "自定义环节",
+        topic: "",
+        speaker: "",
+        host: "",
+        location: req.location,
+        discussion: "",
+        note: ""
+      });
+      renderAgenda();
+      setValidationState("未校验", "");
+    }
+
+    function deleteRow(index) {
+      agenda.splice(index, 1);
+      renderAgenda();
+      validateAgenda();
+    }
+
+    function validateAgenda() {
+      const req = getRequirement();
+      const issues = [];
+      const ranges = [];
+      let total = 0;
+
+      agenda.forEach((item, index) => {
+        const rowNo = index + 1;
+        const range = parseRangeMinutes(item.time);
+        if (!item.time) {
+          issues.push({ level: "bad", text: `第 ${rowNo} 行缺少时间。` });
+        } else if (!range) {
+          issues.push({ level: "bad", text: `第 ${rowNo} 行时间格式需为 HH:MM-HH:MM，且结束时间晚于开始时间。` });
+        } else {
+          total += range.duration;
+          ranges.push({ ...range, rowNo });
+          const rule = ruleMinutes[item.step];
+          if (rule && range.duration < rule.min) {
+            issues.push({ level: "warn", text: `第 ${rowNo} 行“${item.step}”低于最低建议 ${rule.min} 分钟。` });
+          }
+          if (rule && range.duration > rule.max) {
+            issues.push({ level: "warn", text: `第 ${rowNo} 行“${item.step}”超过建议上限 ${rule.max} 分钟。` });
+          }
+        }
+
+        if (!item.topic && item.step !== "茶歇") {
+          issues.push({ level: "bad", text: `第 ${rowNo} 行缺少讲题/主题。` });
+        }
+        if (item.step.includes("主题报告") && !item.speaker) {
+          issues.push({ level: "bad", text: `第 ${rowNo} 行主题报告缺少讲者。` });
+        }
+        if (item.step.includes("圆桌") && !item.discussion) {
+          issues.push({ level: "bad", text: `第 ${rowNo} 行圆桌讨论缺少讨论议题。` });
+        }
+        if ((item.step.includes("圆桌") || item.step.includes("讨论")) && !item.host) {
+          issues.push({ level: "warn", text: `第 ${rowNo} 行讨论环节建议填写主持。` });
+        }
+      });
+
+      ranges.sort((a, b) => a.start - b.start);
+      for (let i = 1; i < ranges.length; i += 1) {
+        if (ranges[i].start < ranges[i - 1].end) {
+          issues.push({ level: "bad", text: `第 ${ranges[i - 1].rowNo} 行与第 ${ranges[i].rowNo} 行存在时间重叠。` });
+        }
+      }
+
+      if (agenda.length === 0) {
+        issues.push({ level: "warn", text: "当前没有日程项。" });
+      }
+      if (total > req.duration + 10) {
+        issues.push({ level: "warn", text: `日程合计约 ${total} 分钟，超过填写会议时长 ${req.duration} 分钟。` });
+      }
+      if (req.duration >= 180 && !agenda.some(item => item.step.includes("茶歇"))) {
+        issues.push({ level: "warn", text: "会议时长达到 3 小时，建议评估是否增加茶歇。" });
+      }
+      if (agenda.some(item => item.step.includes("圆桌")) && !agenda.some(item => {
+        const range = parseRangeMinutes(item.time);
+        return item.step.includes("圆桌") && range && range.duration >= 20;
+      })) {
+        issues.push({ level: "warn", text: "圆桌讨论时间建议不少于 20 分钟。" });
+      }
+
+      if (issues.length === 0) {
+        issues.push({ level: "ok", text: "规则校验通过，日程可导出。" });
+      }
+
+      validationIssues = issues;
+      renderValidation(issues);
+      updateBrief(issues.some(item => item.level === "bad") ? "需修改" : issues.some(item => item.level === "warn") ? "有提醒" : "通过");
+    }
+
+    function renderValidation(issues) {
+      refs.validationList.innerHTML = "";
+      issues.forEach(issue => {
+        const li = document.createElement("li");
+        li.className = issue.level;
+        li.textContent = issue.text;
+        refs.validationList.appendChild(li);
+      });
+
+      if (issues.some(item => item.level === "bad")) {
+        setValidationState("需修改", "bad");
+      } else if (issues.some(item => item.level === "warn")) {
+        setValidationState("提醒", "warn");
+      } else {
+        setValidationState("通过", "ok");
+      }
+    }
+
+    function setValidationState(text, className) {
+      refs.validationStatus.textContent = text;
+      refs.validationStatus.className = `pill ${className}`.trim();
+    }
+
+    function refreshCounts() {
+      refs.agendaCount.textContent = `${agenda.length} 个日程项`;
+    }
+
+    function updateBrief(status) {
+      const req = getRequirement();
+      const endTime = agenda.length ? agenda[agenda.length - 1].time.split("-")[1] : "";
+      refs.briefTheme.textContent = `${req.disease}${req.subtype ? " " + req.subtype : ""}精准诊疗学术交流`;
+      refs.briefTime.textContent = `${req.date || "待定"} ${req.startTime}${endTime ? "-" + endTime : ""}`;
+      refs.briefPlace.textContent = `${req.location} / ${req.scale}`;
+      refs.briefStatus.textContent = status;
+    }
+
+    function exportCsv() {
+      if (agenda.length === 0) {
+        alert("请先生成或新增日程。");
+        return;
+      }
+      validateAgenda();
+      const req = getRequirement();
+      const rows = [
+        ["会议基本信息"],
+        ["会议名称", req.name],
+        ["会议类型", req.type],
+        ["疾病领域", req.disease],
+        ["癌种/分期", req.subtype],
+        ["会议日期", req.date],
+        ["会议地点", req.location],
+        ["会议规模", req.scale],
+        ["会议目标", req.goal],
+        [],
+        ["日程明细"],
+        ["时间", "环节", "讲题/主题", "讲者", "主持", "地点", "讨论议题", "备注"]
+      ];
+
+      agenda.forEach(item => {
+        rows.push([item.time, item.step, item.topic, item.speaker, item.host, item.location, item.discussion, item.note]);
+      });
+
+      rows.push([]);
+      rows.push(["校验结果"]);
+      validationIssues.forEach(item => rows.push([levelText(item.level), item.text]));
+
+      const csv = "\ufeff" + rows.map(row => row.map(csvCell).join(",")).join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${sanitizeFilename(req.name)}_会议日程.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+
+    function levelText(level) {
+      return level === "ok" ? "通过" : level === "bad" ? "需修改" : "提醒";
+    }
+
+    function sanitizeFilename(value) {
+      return String(value || "会议日程").replace(/[\\/:*?"<>|]/g, "_").slice(0, 80);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function clearForm() {
+      document.getElementById("requirementForm").reset();
+      refs.meetingName.value = "";
+      refs.subtype.value = "";
+      refs.location.value = "";
+      refs.goal.value = "";
+      refs.startTime.value = "14:00";
+      initDate();
+      agenda = [];
+      validationIssues = [];
+      renderAgenda();
+      refs.briefTheme.textContent = "尚未生成";
+      refs.briefTime.textContent = "尚未生成";
+      refs.briefPlace.textContent = "尚未生成";
+      refs.briefStatus.textContent = "待填写";
+      refs.validationList.innerHTML = "<li>尚未校验。</li>";
+      setValidationState("未校验", "");
+    }
+
+    refs.agendaBody.addEventListener("click", event => {
+      const button = event.target.closest("[data-delete]");
+      if (button) deleteRow(Number(button.dataset.delete));
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", buildAgenda);
+    document.getElementById("addRowBtn").addEventListener("click", addAgendaRow);
+    document.getElementById("validateBtn").addEventListener("click", validateAgenda);
+    document.getElementById("exportBtn").addEventListener("click", exportCsv);
+    document.getElementById("clearBtn").addEventListener("click", clearForm);
+
+    [refs.meetingName, refs.meetingType, refs.disease, refs.subtype, refs.meetingDate, refs.startTime, refs.duration, refs.scale, refs.location, refs.goal].forEach(input => {
+      input.addEventListener("change", () => updateBrief(refs.briefStatus.textContent));
+      input.addEventListener("input", () => updateBrief(refs.briefStatus.textContent));
+    });
+
+    initDate();
+    refreshCounts();
+  </script>
+</body>
+</html>
