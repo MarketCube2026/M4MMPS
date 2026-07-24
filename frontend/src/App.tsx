@@ -265,7 +265,7 @@ function App() {
       return;
     }
     await persistAllAgenda();
-    window.location.href = `/api/meetings/${meeting.id}/export.xlsx`;
+    api.exportExcel(meeting, agenda, guests, planningText);
   };
 
   return (
